@@ -1,0 +1,100 @@
+<?php
+require_once('bookshelf_lib.php');
+
+$id = optional_param('id', '' , PARAM_INT);
+$instance = optional_param('instanceid', '' , PARAM_INT);
+$book = optional_param('book', '' , PARAM_INT);
+$move = optional_param('move', 0 , PARAM_INT);
+$add = optional_param('add', 0, PARAM_INT);
+
+# couse_books -> contains all course books
+$course_books = get_current_books();
+
+# bookshelf -> contains all books currently in bookshelf
+$bookshelf = get_current_bookshelf();
+
+# fullpath -> fullpath to bookshelf config page
+$fullpath = $CFG->wwwroot .'/course/view.php?id='.$id.'&instanceid='.$instance.'&sesskey='.sesskey().'&blockaction=config';
+
+# user is adding or removing a book from the bookshelf
+if ( (!empty($book)) && (!empty($add)) && confirm_sesskey() ) 
+  {
+  if ($add == 1)
+    {
+    add_book($book);
+    }
+  elseif ($add == -1)
+    {
+    remove_book($book);
+    }
+  }
+
+# user is moving a book in the bookshelf
+if ( (!empty($book)) && (!empty($move)) && confirm_sesskey() ) 
+  {
+  update_book_sort($book, $move);
+  }
+
+?>
+
+
+<p>&nbsp;</p>
+<table width="720" cellpadding="6" cellspacing="30" align="center" border="1">
+<tr>
+    <th colspan="2" align="center"><?php print_string('blockconfig', 'block_bookshelf') ?></th>
+</tr>
+
+<tr valign="top">
+    <td align="right">
+      <?php print_string('configtitle', 'block_bookshelf'); ?> : 
+    </td>
+    <td>
+      <input type="text" name="title" size="30" value="<?php echo isset($this->title)?p($this->title):''; ?>" />
+      &nbsp;<?php print_string('leaveblanktohide', 'block_bookshelf'); ?>
+    </td>
+</tr>
+
+ <tr valign="top">
+     <td align="right">
+         <?php print_string('configheader', 'block_bookshelf'); ?> : 
+     </td>
+     <td>
+         <?php 
+            $options = array();
+            $options[0] = get_string('no');
+            $options[1] = get_string('yes');
+            choose_from_menu($options, 'hideheader', $this->hideheader, '');
+            echo print_string('hideheader', 'block_bookshelf');
+         ?>
+     </td>
+ </tr>
+
+</table>
+
+<p>&nbsp;</p>
+<table width="720" cellpadding="6" cellspacing="30" align="center" border="1">
+<tr>
+    <th colspan="3" align="center"><?php print_string('currentbooks', 'block_bookshelf') ?></th>
+</tr>
+<tr>
+  <td align="center"><b>Book Name</b></td>
+  <td align="center" width="100"><b>Actions</b></td>
+  <td align="center" width="80"><b>Visible</b></td>
+</tr>
+<?php echo get_course_bookshelf() ?>
+</table>
+
+<p>&nbsp;</p>
+<table width="720" cellpadding="6" cellspacing="30" align="center" border="1">
+<tr>
+    <th colspan="3" align="center"><?php print_string('allbooks', 'block_bookshelf') ?></th>
+</tr>
+<tr>
+  <td align="center"><b>Book Name</b></td>
+  <td align="center" width="100"><b>Actions</b></td>
+  <td align="center" width="80"><b>Visible</b></td>
+</tr>
+<?php echo get_available_books() ?>
+</table>
+
+<p align="center"><input type="submit" value="<?php print_string('savechanges') ?>" /></p>

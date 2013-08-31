@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS `mdl_bookshelf` (
+  `id` bigint(10) unsigned NOT NULL auto_increment,
+  `course` bigint(10) unsigned NOT NULL default '0',
+  `book` bigint(10) unsigned NOT NULL default '0',
+  `sortorder` bigint(10) unsigned NOT NULL default '0',
+  `timemodified` bigint(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `course` (`course`)
+)
